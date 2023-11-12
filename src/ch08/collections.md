@@ -19,6 +19,13 @@ v.push(1);
 let v = vec![1, 2, 3];
 ```
 
+
+##### arr 转 vec
+```rust
+let arr = [1,3,4];
+let vec = arr.to_vec();
+```
+
 #### 8.1.2 从Vector中读取元素
 
 ```rust

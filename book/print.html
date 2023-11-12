@@ -1598,6 +1598,12 @@ v.push(1);
 </span><span class="boring">fn main() {
 </span>let v = vec![1, 2, 3];
 <span class="boring">}</span></code></pre></pre>
+<h5 id="arr-转-vec"><a class="header" href="#arr-转-vec">arr 转 vec</a></h5>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let arr = [1,3,4];
+let vec = arr.to_vec();
+<span class="boring">}</span></code></pre></pre>
 <h4 id="812-从vector中读取元素"><a class="header" href="#812-从vector中读取元素">8.1.2 从Vector中读取元素</a></h4>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -1977,95 +1983,10 @@ map.entry(&quot;poneyland&quot;)
 assert_eq!(map[&quot;poneyland&quot;], 43);
 <span class="boring">}</span></code></pre></pre>
 <div style="break-before: page; page-break-before: always;"></div><h2 id="9-认识生命周期"><a class="header" href="#9-认识生命周期">9. 认识生命周期</a></h2>
-<h3 id="91-悬垂指针和生命周期"><a class="header" href="#91-悬垂指针和生命周期">9.1 悬垂指针和生命周期</a></h3>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>{
-    let r;
-    {
-        // x 活的不够久，r引用了x, 在作用域外被销毁
-        let x = 5;
-        r = &amp;x;
-    }
-    println!(&quot;r: {}&quot;, r);
-}
-<span class="boring">}</span></code></pre></pre>
-<h3 id="92-借用检查"><a class="header" href="#92-借用检查">9.2 借用检查</a></h3>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>{
-    let r;                // ---------+-- 'a
-                          //          |
-    {                     //          |
-        let x = 5;        // -+-- 'b  |
-        r = &amp;x;           //  |       |
-    }                     // -+       |
-                          //          |
-    println!(&quot;r: {}&quot;, r); //          |
-}                         // ---------+
-<span class="boring">}</span></code></pre></pre>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>{
-    let x = 5;            // ----------+-- 'b
-                          //           |
-    let r = &amp;x;           // --+-- 'a  |
-                          //   |       |
-    println!(&quot;r: {}&quot;, r); //   |       |
-                          // --+       |
-}                         // ----------+
-<span class="boring">}</span></code></pre></pre>
-<h3 id="93-函数中的生命周期"><a class="header" href="#93-函数中的生命周期">9.3 函数中的生命周期</a></h3>
-<pre><pre class="playground"><code class="language-rust">fn main() {
-    let string1 = String::from(&quot;abcd&quot;);
-    let string2 = &quot;xyz&quot;;
-
-    let result = longest(string1.as_str(), string2);
-    println!(&quot;The longest string is {}&quot;, result);
-}
-
-fn longest&lt;'a&gt;(x: &amp;'a str, y: &amp;'a str) -&gt; &amp;'a str {
-    // if 需要返回值，无法判断返回的是x或y，因此要明确生命周期
-    if x.len() &gt; y.len() {
-        x
-    } else {
-        y
-    }
-}</code></pre></pre>
-<h3 id="94-结构体中的生命周期"><a class="header" href="#94-结构体中的生命周期">9.4 结构体中的生命周期</a></h3>
-<pre><pre class="playground"><code class="language-rust">// 结构体 ImportantExcerpt 所引用的字符串 str 必须比该结构体活得更久。
-struct ImportantExcerpt&lt;'a&gt; {
-    part: &amp;'a str,
-}
-
-fn main() {
-    let novel = String::from(&quot;Call me Ishmael. Some years ago...&quot;);
-    let first_sentence = novel.split('.').next().expect(&quot;Could not find a '.'&quot;);
-    let i = ImportantExcerpt {
-        part: first_sentence,
-    };
-}</code></pre></pre>
-<pre><pre class="playground"><code class="language-rust">#[derive(Debug)]
-struct ImportantExcerpt&lt;'a&gt; {
-    part: &amp;'a str,
-}
-
-fn main() {
-    let i;
-    {
-        let novel = String::from(&quot;Call me Ishmael. Some years ago...&quot;);
-        let first_sentence = novel.split('.').next().expect(&quot;Could not find a '.'&quot;);
-        i = ImportantExcerpt {
-            part: first_sentence,
-        };
-    }
-    // 可以看出结构体比它引用的字符串活得更久
-    println!(&quot;{:?}&quot;,i);
-}</code></pre></pre>
-<h3 id="95-生命周期消除"><a class="header" href="#95-生命周期消除">9.5 生命周期消除</a></h3>
-<p><strong>引用才有生命周期</strong></p>
-<p><strong>三条消除规则</strong></p>
-<p>编译器使用三条消除规则来确定哪些场景不需要显式地去标注生命周期。其中第一条规则应用在输入生命周期上，第二、三条应用在输出生命周期上。若编译器发现三条规则都不适用时，就会报错，提示你需要手动标注生命周期。</p>
+<p><font color="red" size=5 >&quot;引用才有生命周期&quot;</font></p>
+<h3 id="91-生命周期消除"><a class="header" href="#91-生命周期消除">9.1 生命周期消除</a></h3>
+<p><em><strong>三条消除规则</strong></em></p>
+<p><font size=1>编译器使用三条消除规则来确定哪些场景不需要显式地去标注生命周期。其中第一条规则应用在输入生命周期上，第二、三条应用在输出生命周期上。若编译器发现三条规则都不适用时，就会报错，提示你需要手动标注生命周期。</font></p>
 <ul>
 <li><strong>每一个引用参数都会获得独自的生命周期</strong></li>
 </ul>
@@ -2084,36 +2005,86 @@ fn main() {
 <blockquote>
 <p>拥有 &amp;self 形式的参数，说明该函数是一个 方法，该规则让方法的使用便利度大幅提升。</p>
 </blockquote>
-<p>规则其实很好理解，但是，爱思考的读者肯定要发问了，例如第三条规则，若一个方法，它的返回值的生命周期就是跟参数 &amp;self 的不一样怎么办？总不能强迫我返回的值总是和 &amp;self 活得一样久吧？! 问得好，答案很简单：手动标注生命周期，因为这些规则只是编译器发现你没有标注生命周期时默认去使用的，当你标注生命周期后，编译器自然会乖乖听你的话。</p>
-<h3 id="96-方法中的生命周期"><a class="header" href="#96-方法中的生命周期">9.6 方法中的生命周期</a></h3>
+<h3 id="92-函数中的生命周期"><a class="header" href="#92-函数中的生命周期">9.2 函数中的生命周期</a></h3>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    let string1 = String::from(&quot;abcd&quot;);
+    let string2 = &quot;xyz&quot;;
+
+    let result = longest(string1.as_str(), string2);
+    println!(&quot;The longest string is {}&quot;, result);
+}
+
+// 第一条规则，x和y各有生命周期
+// 第二条规则，多个生命周期参数，无法确定返回值的生命周期
+// 第三条规则，不是方法，无法确定返回值生命周期
+// 不加注：fn longest&lt;'a,'b&gt;(x:&amp;'a str,y:&amp;'b str)-&gt;&amp;str{}
+//
+fn longest&lt;'a&gt;(x: &amp;'a str, y: &amp;'a str) -&gt; &amp;'a str {
+    // if 需要返回值，无法判断返回的是x或y，因此要明确生命周期
+    if x.len() &gt; y.len() {
+        x
+    } else {
+        y
+    }
+}</code></pre></pre>
+<h3 id="93-结构体中的生命周期"><a class="header" href="#93-结构体中的生命周期">9.3 结构体中的生命周期</a></h3>
+<pre><pre class="playground"><code class="language-rust">// 结构体 ImportantExcerpt 所引用的字符串 str 必须比该结构体活得更久。
+struct ImportantExcerpt&lt;'a&gt; {
+    part: &amp;'a str,  // 成员为引用类型，须标注
+}
+
+fn main() {
+    let novel = String::from(&quot;Call me Ishmael. Some years ago...&quot;);
+    let first_sentence = novel.split('.').next().expect(&quot;Could not find a '.'&quot;);
+    let i = ImportantExcerpt {
+        part: first_sentence,
+    };
+}</code></pre></pre>
+<pre><pre class="playground"><code class="language-rust">#[derive(Debug)]
+struct ImportantExcerpt&lt;'a&gt; {
+    part: &amp;'a str,  // 成员为引用类型，须标注
+}
+
+fn main() {
+    let i;
+    {
+        let novel = String::from(&quot;Call me Ishmael. Some years ago...&quot;);
+        let first_sentence = novel.split('.').next().expect(&quot;Could not find a '.'&quot;);
+        // 捕获i, 但是first_sentence的生命周期不够
+        i = ImportantExcerpt {
+            part: first_sentence,
+        };
+        // first_sentence销毁
+    }
+    // 可以看出结构体比它引用的字符串活得更久
+    println!(&quot;{:?}&quot;,i);
+}</code></pre></pre>
+<h3 id="94-方法中的生命周期"><a class="header" href="#94-方法中的生命周期">9.4 方法中的生命周期</a></h3>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>struct ImportantExcerpt&lt;'a&gt; {
     part: &amp;'a str,
 }
 
+// 需要与结构体中的生命周期保持一致
+// 三条规则，方法签名中一般不用标注生命周期
 impl&lt;'a&gt; ImportantExcerpt&lt;'a&gt; {
     fn level(&amp;self) -&gt; i32 {
         3
     }
 }
 <span class="boring">}</span></code></pre></pre>
-<h3 id="97-静态生命周期"><a class="header" href="#97-静态生命周期">9.7 静态生命周期</a></h3>
+<h3 id="95-静态生命周期"><a class="header" href="#95-静态生命周期">9.5 静态生命周期</a></h3>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>// 'static，拥有该生命周期的引用可以和整个程序活得一样久。
+// 'static 引用类型！ const 非引用类型！
 let s: &amp;'static str = &quot;我没啥优点，就是活得久，嘿嘿&quot;;
 <span class="boring">}</span></code></pre></pre>
-<h3 id="98-一个复杂的例子-泛型特征约束"><a class="header" href="#98-一个复杂的例子-泛型特征约束">9.8 一个复杂的例子: 泛型，特征约束</a></h3>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>use std::fmt::Display;
+<h3 id="96-一个复杂的例子-泛型特征约束"><a class="header" href="#96-一个复杂的例子-泛型特征约束">9.6 一个复杂的例子: 泛型，特征约束</a></h3>
+<pre><pre class="playground"><code class="language-rust">use std::fmt::Display;
 
-fn longest_with_an_announcement&lt;'a, T&gt;(
-    x: &amp;'a str,
-    y: &amp;'a str,
-    ann: T,
-) -&gt; &amp;'a str
+fn longest_with_an_announcement&lt;'a, T&gt;( x: &amp;'a str, y: &amp;'a str, ann: T,) -&gt; &amp;'a str
 where
     T: Display,
 {
@@ -2124,7 +2095,10 @@ where
         y
     }
 }
-<span class="boring">}</span></code></pre></pre>
+fn main(){
+    let (str1, str2) = (&quot;long string&quot;, &quot;xyz&quot;);
+    assert_eq!(longest_with_an_announcement(str1, str2, &quot;我是一个提示信息&quot;), str1);
+}</code></pre></pre>
 
                     </main>
 
