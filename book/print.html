@@ -668,9 +668,7 @@ fn main() {
     println!(&quot;{}&quot;, ip_str);
 }</code></pre></pre>
 <h4 id="513-模式绑定"><a class="header" href="#513-模式绑定">5.1.3 模式绑定</a></h4>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>#[derive(Debug)]
+<pre><pre class="playground"><code class="language-rust">#[derive(Debug)]
 enum UsState {
     Alabama,
     Alaska,
@@ -696,7 +694,11 @@ fn value_in_cents(coin: Coin) -&gt; u8 {
         },
     }
 }
-<span class="boring">}</span></code></pre></pre>
+
+fn main() {
+    let coin = Coin::Quarter(UsState::Alaska);
+    assert_eq!(value_in_cents(coin), 25);
+}</code></pre></pre>
 <pre><pre class="playground"><code class="language-rust">enum Action {
     Say(String),
     MoveTo(i32, i32),
@@ -724,6 +726,23 @@ fn main() {
             }
         }
     }
+}</code></pre></pre>
+<pre><pre class="playground"><code class="language-rust">#[allow(dead_code)]
+enum Action {
+    Say(String),
+    MoveTo(i32, i32),
+    ChangeColorRGB(u16, u16, u16),
+}
+
+fn main() {
+    let actions = Action::MoveTo(12, 34);
+    let res = match actions {
+        // 获取远祖，并拆包
+        Action::MoveTo(x, y) =&gt; (Some(x), Some(y)),
+        _ =&gt; (None, None),
+    };
+    assert_eq!(res.0.unwrap(),12);
+    assert_eq!(res.1.unwrap(),34);
 }</code></pre></pre>
 <h4 id="514-穷尽匹配"><a class="header" href="#514-穷尽匹配">5.1.4 穷尽匹配</a></h4>
 <pre><pre class="playground"><code class="language-rust">fn main(){

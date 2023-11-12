@@ -74,6 +74,11 @@ fn value_in_cents(coin: Coin) -> u8 {
         },
     }
 }
+
+fn main() {
+    let coin = Coin::Quarter(UsState::Alaska);
+    assert_eq!(value_in_cents(coin), 25);
+}
 ```
 
 ```rust
@@ -104,6 +109,26 @@ fn main() {
             }
         }
     }
+}
+```
+
+```rust
+#[allow(dead_code)]
+enum Action {
+    Say(String),
+    MoveTo(i32, i32),
+    ChangeColorRGB(u16, u16, u16),
+}
+
+fn main() {
+    let actions = Action::MoveTo(12, 34);
+    let res = match actions {
+        // 获取远祖，并拆包
+        Action::MoveTo(x, y) => (Some(x), Some(y)),
+        _ => (None, None),
+    };
+    assert_eq!(res.0.unwrap(),12);
+    assert_eq!(res.1.unwrap(),34);
 }
 ```
 
@@ -556,4 +581,3 @@ fn main() {
     }
 }
 ```
-
