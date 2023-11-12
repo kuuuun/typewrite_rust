@@ -1,0 +1,6 @@
+[book]
+authors = ["KuuuuuuN"]
+language = "cjk"
+multilingual = false
+src = "src"
+title = "Typewrite of Rust"
