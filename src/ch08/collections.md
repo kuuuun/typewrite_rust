@@ -19,8 +19,8 @@ v.push(1);
 let v = vec![1, 2, 3];
 ```
 
-
 ##### arr 转 vec
+
 ```rust
 let arr = [1,3,4];
 let vec = arr.to_vec();
@@ -329,6 +329,7 @@ assert_eq!(vec![2, 4, 6], doubled);
 ```
 
 #### 8.2.2 所有权转移
+
 ```rust
 fn main() {
     use std::collections::HashMap;
@@ -362,7 +363,6 @@ fn main() {
     println!("还有，他的真实年龄远远不止{}岁", age);
 }
 ```
-
 
 #### 8.2.3 查询hashmap
 
@@ -439,6 +439,7 @@ for word in text.split_whitespace() {
 println!("{:?}", map);
 }
 ```
+
 ```rust
 use std::collections::HashMap;
 
@@ -455,4 +456,3 @@ map.entry("poneyland")
    .or_insert(42);
 assert_eq!(map["poneyland"], 43);
 ```
-
