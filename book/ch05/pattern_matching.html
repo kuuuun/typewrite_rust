@@ -1,0 +1,708 @@
+<!DOCTYPE HTML>
+<html lang="cjk" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title> 模式匹配  - Typewrite of Rust</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html"> 介绍 </a></li><li class="spacer"></li><li class="chapter-item expanded affix "><li class="part-title">速查</li><li class="spacer"></li><li class="chapter-item expanded "><a href="../ch01/var_binding.html"><strong aria-hidden="true">1.</strong>  变量绑定和解构 </a></li><li class="chapter-item expanded "><a href="../ch02/basic_type.html"><strong aria-hidden="true">2.</strong>  基本类型 </a></li><li class="chapter-item expanded "><a href="../ch03/complex_type.html"><strong aria-hidden="true">3.</strong>  复合类型 </a></li><li class="chapter-item expanded "><a href="../ch04/flow_control.html"><strong aria-hidden="true">4.</strong>  流程控制 </a></li><li class="chapter-item expanded "><a href="../ch05/pattern_matching.html" class="active"><strong aria-hidden="true">5.</strong>  模式匹配 </a></li><li class="chapter-item expanded "><a href="../ch06/method.html"><strong aria-hidden="true">6.</strong>  方法 </a></li><li class="chapter-item expanded "><a href="../ch07/generics_and_traits.html"><strong aria-hidden="true">7.</strong>  泛型和特征 </a></li><li class="chapter-item expanded "><a href="../ch08/collections.html"><strong aria-hidden="true">8.</strong>  集合类型 </a></li><li class="chapter-item expanded "><a href="../ch09/lifetimes.html"><strong aria-hidden="true">9.</strong>  认识生命周期 </a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Typewrite of Rust</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="5-模式匹配"><a class="header" href="#5-模式匹配">5. 模式匹配</a></h2>
+<h3 id="51-match和if-let"><a class="header" href="#51-match和if-let">5.1 match和if let</a></h3>
+<h4 id="511-匹配模式-match和if-let"><a class="header" href="#511-匹配模式-match和if-let">5.1.1 匹配模式: match和if let</a></h4>
+<pre><pre class="playground"><code class="language-rust">enum Direction {
+    East,
+    West,
+    North,
+    South,
+}
+
+// 模式匹配最常用的就是 match 和 if let
+fn main() {
+    let dire = Direction::South;
+    match dire {
+        Direction::East =&gt; println!(&quot;East&quot;),
+        Direction::North | Direction::South =&gt; {
+            println!(&quot;South or North&quot;);
+        },
+        _ =&gt; println!(&quot;West&quot;),
+    };
+}</code></pre></pre>
+<h4 id="512-使用-match-表达式赋值"><a class="header" href="#512-使用-match-表达式赋值">5.1.2 使用 match 表达式赋值</a></h4>
+<pre><pre class="playground"><code class="language-rust">enum IpAddr {
+   Ipv4,
+   Ipv6
+}
+
+fn main() {
+    let ip1 = IpAddr::Ipv6;
+    // match 本身也是一个表达式，因此可以用它来赋值
+    let ip_str = match ip1 {
+        IpAddr::Ipv4 =&gt; &quot;127.0.0.1&quot;,
+        _ =&gt; &quot;::1&quot;,
+    };
+
+    println!(&quot;{}&quot;, ip_str);
+}</code></pre></pre>
+<h4 id="513-模式绑定"><a class="header" href="#513-模式绑定">5.1.3 模式绑定</a></h4>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug)]
+enum UsState {
+    Alabama,
+    Alaska,
+    // --snip--
+}
+
+enum Coin {
+    Penny,
+    Nickel,
+    Dime,
+    Quarter(UsState), // 25美分硬币
+}
+
+fn value_in_cents(coin: Coin) -&gt; u8 {
+    match coin {
+        Coin::Penny =&gt; 1,
+        Coin::Nickel =&gt; 5,
+        Coin::Dime =&gt; 10,
+        // 内部存储的值绑定到了 state 变量上，因此 state 变量就是对应的 UsState 枚举类型。
+        Coin::Quarter(state) =&gt; {
+            println!(&quot;State quarter from {:?}!&quot;, state);
+            25
+        },
+    }
+}
+<span class="boring">}</span></code></pre></pre>
+<pre><pre class="playground"><code class="language-rust">enum Action {
+    Say(String),
+    MoveTo(i32, i32),
+    ChangeColorRGB(u16, u16, u16),
+}
+
+fn main() {
+    let actions = [
+        Action::Say(&quot;Hello Rust&quot;.to_string()),
+        Action::MoveTo(1,2),
+        Action::ChangeColorRGB(255,255,0),
+    ];
+    for action in actions {
+        match action {
+            Action::Say(s) =&gt; {
+                println!(&quot;{}&quot;, s);
+            },
+            Action::MoveTo(x, y) =&gt; {
+                println!(&quot;point from (0, 0) move to ({}, {})&quot;, x, y);
+            },
+            Action::ChangeColorRGB(r, g, _) =&gt; {
+                println!(&quot;change color into '(r:{}, g:{}, b:0)', 'b' has been ignored&quot;,
+                    r, g,
+                );
+            }
+        }
+    }
+}</code></pre></pre>
+<h4 id="514-穷尽匹配"><a class="header" href="#514-穷尽匹配">5.1.4 穷尽匹配</a></h4>
+<pre><pre class="playground"><code class="language-rust">fn main(){
+    let number = 42;
+    match number{
+        0 =&gt; println!(&quot;Origin&quot;),
+        1...3 =&gt; println!(&quot;All&quot;),
+        |5|7|13| =&gt; println!(&quot;Bad Luck&quot;),
+        n @ 42 =&gt; println!(&quot;Answer is {}&quot;, n),
+        _ =&gt; println!(&quot;Common&quot;),
+    }
+}</code></pre></pre>
+<h4 id="515-if-let匹配"><a class="header" href="#515-if-let匹配">5.1.5 if let匹配</a></h4>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// 只有一种情况的匹配,适合使用 if let
+if let Some(3) = v {
+    println!(&quot;three&quot;);
+}
+
+// match 需要穷尽匹配
+let v = Some(3u8);
+match v {
+    Some(3) =&gt; println!(&quot;three&quot;),
+    _ =&gt; (),
+}
+<span class="boring">}</span></code></pre></pre>
+<h4 id="516-matches宏"><a class="header" href="#516-matches宏">5.1.6 matches!宏</a></h4>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let foo = 'f';
+assert!(matches!(foo, 'A'..='Z' | 'a'..='z'));
+
+let bar = Some(4);
+assert!(matches!(bar, Some(x) if x &gt; 2));
+
+<span class="boring">}</span></code></pre></pre>
+<pre><pre class="playground"><code class="language-rust">enum MyEnum {
+    Foo,
+    Bar
+}
+
+fn main() {
+    let mut count = 0;
+
+    let v = vec![MyEnum::Foo,MyEnum::Bar,MyEnum::Foo];
+    for e in v {
+        if matches!(e, MyEnum::Foo) {
+            count += 1;
+        }
+    }
+    assert_eq!(count, 2);
+}</code></pre></pre>
+<pre><pre class="playground"><code class="language-rust">#[derive(Debug)]
+enum MyEnum {
+    Foo,
+    Bar
+}
+
+fn main() {
+    let v = vec![MyEnum::Foo,MyEnum::Bar,MyEnum::Foo];
+
+    for a in v.iter().filter(|x| matches!(x, MyEnum::Foo)){
+        println!(&quot;{:?}&quot;, a);
+    }
+}</code></pre></pre>
+<h4 id="517-变量遮蔽"><a class="header" href="#517-变量遮蔽">5.1.7 变量遮蔽</a></h4>
+<pre><pre class="playground"><code class="language-rust">// 在if let 中，= 右边 Some(i32) 类型的 age 被左边 i32 类型的新 age 遮蔽了，该遮蔽一直持续到 if let 语句块的结束。
+// 因此第三个 println! 输出的 age 依然是 Some(i32) 类型。
+fn main() {
+   let age = Some(30);
+   println!(&quot;在匹配前，age是{:?}&quot;,age);
+    // 尽量不用用同名,避免难以理解, 比如用x
+   if let Some(age) = age {
+       println!(&quot;匹配出来的age是{}&quot;,age);
+   }x
+
+   println!(&quot;在匹配后，age是{:?}&quot;,age);
+}</code></pre></pre>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+   let age = Some(30);
+   println!(&quot;在匹配前，age是{:?}&quot;,age);
+   match age {
+        // 尽量不用用同名,避免难以理解, 比如用x
+       Some(age) =&gt;  println!(&quot;匹配出来的age是{}&quot;,age),
+       _ =&gt; ()
+   }
+   println!(&quot;在匹配后，age是{:?}&quot;,age);
+}</code></pre></pre>
+<h3 id="52-解构option"><a class="header" href="#52-解构option">5.2 解构Option</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// Option 值的存在; Result 错误的存在
+fn plus_one(x: Option&lt;i32&gt;) -&gt; Option&lt;i32&gt; {
+    match x {
+        None =&gt; None,
+        Some(i) =&gt; Some(i + 1),
+    }
+}
+
+// Option 实现了Copy, 会move
+let five = Some(5);
+let six = plus_one(five);
+let none = plus_one(None);
+
+// unwrap解包Some()里包含的值
+let six = six.unwrap();
+<span class="boring">}</span></code></pre></pre>
+<h3 id="53-全模式列表"><a class="header" href="#53-全模式列表">5.3 全模式列表</a></h3>
+<h4 id="531-匹配字面量"><a class="header" href="#531-匹配字面量">5.3.1 匹配字面量</a></h4>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// 匹配字面量
+let x = 1;
+
+match x {
+    1 =&gt; println!(&quot;one&quot;),
+    2 =&gt; println!(&quot;two&quot;),
+    3 =&gt; println!(&quot;three&quot;),
+    _ =&gt; println!(&quot;anything&quot;),
+}
+<span class="boring">}</span></code></pre></pre>
+<h4 id="532-匹配命名变量"><a class="header" href="#532-匹配命名变量">5.3.2 匹配命名变量</a></h4>
+<pre><pre class="playground"><code class="language-rust">// 匹配命名变量
+fn main() {
+    let x = Some(5);
+    let y = 10;
+
+    match x {
+        Some(50) =&gt; println!(&quot;Got 50&quot;),
+        Some(y) =&gt; println!(&quot;Matched, y = {:?}&quot;, y),
+        _ =&gt; println!(&quot;Default case, x = {:?}&quot;, x),
+    }
+
+    println!(&quot;at the end: x = {:?}, y = {:?}&quot;, x, y);
+}</code></pre></pre>
+<h4 id="533-单分支多模式"><a class="header" href="#533-单分支多模式">5.3.3 单分支多模式</a></h4>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// 单分支多模式
+let x = 1;
+
+match x {
+    1 | 2 =&gt; println!(&quot;one or two&quot;),
+    3 =&gt; println!(&quot;three&quot;),
+    _ =&gt; println!(&quot;anything&quot;),
+}
+<span class="boring">}</span></code></pre></pre>
+<h4 id="534-通过序列--匹配值的范围"><a class="header" href="#534-通过序列--匹配值的范围">5.3.4 通过序列 ..= 匹配值的范围</a></h4>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// 通过序列 ..= 匹配值的范围
+let x = 5;
+
+match x {
+    1..=5 =&gt; println!(&quot;one through five&quot;),
+    _ =&gt; println!(&quot;something else&quot;),
+}
+
+// 另外一个例子
+let x = 'c';
+
+match x {
+    'a'..='j' =&gt; println!(&quot;early ASCII letter&quot;),
+    'k'..='z' =&gt; println!(&quot;late ASCII letter&quot;),
+    _ =&gt; println!(&quot;something else&quot;),
+}
+<span class="boring">}</span></code></pre></pre>
+<h4 id="535-结构并分解值"><a class="header" href="#535-结构并分解值">5.3.5 结构并分解值</a></h4>
+<h5 id="解构结构体"><a class="header" href="#解构结构体">解构结构体</a></h5>
+<pre><pre class="playground"><code class="language-rust">// 解构并分解值
+struct Point {
+    x: i32,
+    y: i32,
+}
+
+fn main() {
+    let p = Point { x: 0, y: 7 };
+
+    let Point { x: a, y: b } = p;
+    let Point { x, y } = p;
+    assert_eq!(0, a);
+    assert_eq!(7, b);
+    assert_eq!(0, x);
+    assert_eq!(7, y);
+}</code></pre></pre>
+<pre><pre class="playground"><code class="language-rust">// 结构匹配
+fn main() {
+    let p = Point { x: 0, y: 7 };
+
+    match p {
+        Point { x, y: 0 } =&gt; println!(&quot;On the x axis at {}&quot;, x),
+        Point { x: 0, y } =&gt; println!(&quot;On the y axis at {}&quot;, y),
+        Point { x, y } =&gt; println!(&quot;On neither axis: ({}, {})&quot;, x, y),
+    }
+}</code></pre></pre>
+<h5 id="解构枚举"><a class="header" href="#解构枚举">解构枚举</a></h5>
+<pre><pre class="playground"><code class="language-rust">enum Message {
+    Quit,
+    Move { x: i32, y: i32 },
+    Write(String),
+    ChangeColor(i32, i32, i32),
+}
+
+fn main() {
+    let msg = Message::ChangeColor(0, 160, 255);
+
+    match msg {
+        Message::Quit =&gt; {
+            println!(&quot;The Quit variant has no data to destructure.&quot;)
+        }
+        Message::Move { x, y } =&gt; {
+            println!(
+                &quot;Move in the x direction {} and in the y direction {}&quot;,
+                x,
+                y
+            );
+        }
+        Message::Write(text) =&gt; println!(&quot;Text message: {}&quot;, text),
+        Message::ChangeColor(r, g, b) =&gt; {
+            println!(
+                &quot;Change the color to red {}, green {}, and blue {}&quot;,
+                r,
+                g,
+                b
+            )
+        }
+    }
+}</code></pre></pre>
+<h5 id="解构嵌套的结构体和枚举"><a class="header" href="#解构嵌套的结构体和枚举">解构嵌套的结构体和枚举</a></h5>
+<pre><pre class="playground"><code class="language-rust">enum Color {
+   Rgb(i32, i32, i32),
+   Hsv(i32, i32, i32),
+}
+
+enum Message {
+    Quit,
+    Move { x: i32, y: i32 },
+    Write(String),
+    ChangeColor(Color),
+}
+
+fn main() {
+    let msg = Message::ChangeColor(Color::Hsv(0, 160, 255));
+
+    match msg {
+        Message::ChangeColor(Color::Rgb(r, g, b)) =&gt; {
+            println!(
+                &quot;Change the color to red {}, green {}, and blue {}&quot;,
+                r,
+                g,
+                b
+            )
+        }
+        Message::ChangeColor(Color::Hsv(h, s, v)) =&gt; {
+            println!(
+                &quot;Change the color to hue {}, saturation {}, and value {}&quot;,
+                h,
+                s,
+                v
+            )
+        }
+        _ =&gt; ()
+    }
+}</code></pre></pre>
+<h5 id="解构结构体和元组"><a class="header" href="#解构结构体和元组">解构结构体和元组</a></h5>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct Point {
+     x: i32,
+     y: i32,
+ }
+
+let ((feet, inches), Point {x, y}) = ((3, 10), Point { x: 3, y: -10 });
+<span class="boring">}</span></code></pre></pre>
+<h5 id="解构数组"><a class="header" href="#解构数组">解构数组</a></h5>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// 定长数组
+let arr: [u16; 2] = [114, 514];
+let [x, y] = arr;
+
+assert_eq!(x, 114);
+assert_eq!(y, 514);
+<span class="boring">}</span></code></pre></pre>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// 不定长数组
+let arr: &amp;[u16] = &amp;[114, 514];
+
+if let [x, ..] = arr {
+    assert_eq!(x, &amp;114);
+}
+
+if let &amp;[.., y] = arr {
+    assert_eq!(y, 514);
+}
+
+let arr: &amp;[u16] = &amp;[];
+
+assert!(matches!(arr, [..]));   // [..] 就是个空数组
+assert!(!matches!(arr, [x, ..]));   // x is not in scope
+<span class="boring">}</span></code></pre></pre>
+<h4 id="536-忽略模式中的值"><a class="header" href="#536-忽略模式中的值">5.3.6 忽略模式中的值</a></h4>
+<h5 id="使用-_-忽略整个值"><a class="header" href="#使用-_-忽略整个值">使用 _ 忽略整个值</a></h5>
+<pre><pre class="playground"><code class="language-rust">fn foo(_: i32, y: i32) {
+    println!(&quot;This code only uses the y parameter: {}&quot;, y);
+}
+
+fn main() {
+    foo(3, 4);
+}</code></pre></pre>
+<h5 id="用--忽略剩余值"><a class="header" href="#用--忽略剩余值">用 .. 忽略剩余值</a></h5>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct Point {
+    x: i32,
+    y: i32,
+    z: i32,
+}
+
+let origin = Point { x: 0, y: 0, z: 0 };
+
+match origin {
+    Point { x, .. } =&gt; println!(&quot;x is {}&quot;, x),
+}
+<span class="boring">}</span></code></pre></pre>
+<h4 id="537-匹配守卫提供的额外条件"><a class="header" href="#537-匹配守卫提供的额外条件">5.3.7 匹配守卫提供的额外条件</a></h4>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let num = Some(4);
+
+match num {
+    Some(x) if x &lt; 5 =&gt; println!(&quot;less than five: {}&quot;, x),
+    Some(x) =&gt; println!(&quot;{}&quot;, x),
+    None =&gt; (),
+}
+<span class="boring">}</span></code></pre></pre>
+<h3 id="54-绑定"><a class="header" href="#54-绑定">5.4 @绑定</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>enum Message {
+    Hello { id: i32 },
+}
+
+let msg = Message::Hello { id: 5 };
+
+match msg {
+    Message::Hello { id: id_variable @ 3..=7 } =&gt; {
+        println!(&quot;Found an id in range: {}&quot;, id_variable)
+    },
+    Message::Hello { id: 10..=12 } =&gt; {
+        println!(&quot;Found an id in another range&quot;)
+    },
+    Message::Hello { id } =&gt; {
+        println!(&quot;Found some other id: {}&quot;, id)
+    },
+}
+<span class="boring">}</span></code></pre></pre>
+<h4 id="541-前绑定后解构rust-156-新增"><a class="header" href="#541-前绑定后解构rust-156-新增">5.4.1 @前绑定后解构(Rust 1.56 新增)</a></h4>
+<pre><pre class="playground"><code class="language-rust">#[derive(Debug)]
+struct Point {
+    x: i32,
+    y: i32,
+}
+
+fn main() {
+    // 绑定新变量 `p`，同时对 `Point` 进行解构
+    let p @ Point {x: px, y: py } = Point {x: 10, y: 23};
+    println!(&quot;x: {}, y: {}&quot;, px, py);
+    println!(&quot;{:?}&quot;, p);
+
+
+    let point = Point {x: 10, y: 5};
+    if let p @ Point {x: 10, y} = point {
+        println!(&quot;x is 10 and y is {} in {:?}&quot;, y, p);
+    } else {
+        println!(&quot;x was not 10 :(&quot;);
+    }
+}</code></pre></pre>
+<h4 id="542-新特性rust-153-新增"><a class="header" href="#542-新特性rust-153-新增">5.4.2 @新特性(Rust 1.53 新增)</a></h4>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    match 1 {
+        num @ (1 | 2) =&gt; {
+            println!(&quot;{}&quot;, num);
+        }
+        _ =&gt; {}
+    }
+}</code></pre></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../ch04/flow_control.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../ch06/method.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../ch04/flow_control.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../ch06/method.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

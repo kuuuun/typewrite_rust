@@ -1,0 +1,619 @@
+<!DOCTYPE HTML>
+<html lang="cjk" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title> 集合类型  - Typewrite of Rust</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html"> 介绍 </a></li><li class="spacer"></li><li class="chapter-item expanded affix "><li class="part-title">速查</li><li class="spacer"></li><li class="chapter-item expanded "><a href="../ch01/var_binding.html"><strong aria-hidden="true">1.</strong>  变量绑定和解构 </a></li><li class="chapter-item expanded "><a href="../ch02/basic_type.html"><strong aria-hidden="true">2.</strong>  基本类型 </a></li><li class="chapter-item expanded "><a href="../ch03/complex_type.html"><strong aria-hidden="true">3.</strong>  复合类型 </a></li><li class="chapter-item expanded "><a href="../ch04/flow_control.html"><strong aria-hidden="true">4.</strong>  流程控制 </a></li><li class="chapter-item expanded "><a href="../ch05/pattern_matching.html"><strong aria-hidden="true">5.</strong>  模式匹配 </a></li><li class="chapter-item expanded "><a href="../ch06/method.html"><strong aria-hidden="true">6.</strong>  方法 </a></li><li class="chapter-item expanded "><a href="../ch07/generics_and_traits.html"><strong aria-hidden="true">7.</strong>  泛型和特征 </a></li><li class="chapter-item expanded "><a href="../ch08/collections.html" class="active"><strong aria-hidden="true">8.</strong>  集合类型 </a></li><li class="chapter-item expanded "><a href="../ch09/lifetimes.html"><strong aria-hidden="true">9.</strong>  认识生命周期 </a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Typewrite of Rust</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="8-集合类型"><a class="header" href="#8-集合类型">8. 集合类型</a></h2>
+<h3 id="81-动态数组vector"><a class="header" href="#81-动态数组vector">8.1 动态数组Vector</a></h3>
+<h4 id="811-创建动态数组"><a class="header" href="#811-创建动态数组">8.1.1 创建动态数组</a></h4>
+<h5 id="vecnew"><a class="header" href="#vecnew">Vec::new</a></h5>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let v: Vec&lt;i32&gt; = Vec::new();
+
+let mut v = Vec::new();
+v.push(1);
+<span class="boring">}</span></code></pre></pre>
+<h5 id="vec"><a class="header" href="#vec"><code>vec![]</code></a></h5>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let v = vec![1, 2, 3];
+<span class="boring">}</span></code></pre></pre>
+<h4 id="812-从vector中读取元素"><a class="header" href="#812-从vector中读取元素">8.1.2 从Vector中读取元素</a></h4>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let v = vec![1, 2, 3, 4, 5];
+
+// 通过下标
+let third: &amp;i32 = &amp;v[2];
+println!(&quot;第三个元素是 {}&quot;, third);
+
+// 通过get方法
+match v.get(2) {
+    Some(third) =&gt; println!(&quot;第三个元素是 {third}&quot;),
+    None =&gt; println!(&quot;去你的第三个元素，根本没有！&quot;),
+}
+<span class="boring">}</span></code></pre></pre>
+<h4 id="813-下标索引与get的区别"><a class="header" href="#813-下标索引与get的区别">8.1.3 下标索引与.get的区别</a></h4>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let v = vec![1, 2, 3, 4, 5];
+
+let does_not_exist = &amp;v[100];   // 报错
+let does_not_exist = v.get(100);    // 有值返回Some, 无值返回None
+<span class="boring">}</span></code></pre></pre>
+<h4 id="814-同时借用多个数组元素"><a class="header" href="#814-同时借用多个数组元素">8.1.4 同时借用多个数组元素</a></h4>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// 原因在于：数组的大小是可变的，当旧数组的大小不够用时，Rust 会重新分配一块更大的内存空间，然后把旧数组拷贝过来。
+// 这种情况下，之前的引用显然会指向一块无效的内存，这非常 rusty —— 对用户进行严格的教育。
+//
+// 不可变借用可以n个，可变借用只能有一个
+let mut v = vec![1, 2, 3, 4, 5];
+
+// 不可变借用
+let first = &amp;v[0];
+
+// 可变借用
+v.push(6);
+
+// 又一次使用first，报错！
+println!(&quot;The first element is: {first}&quot;);
+<span class="boring">}</span></code></pre></pre>
+<h4 id="815-迭代遍历vector中的元素"><a class="header" href="#815-迭代遍历vector中的元素">8.1.5 迭代遍历Vector中的元素</a></h4>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let v = vec![1, 2, 3];
+// 遍历不可变借用v
+for i in &amp;v {
+    println!(&quot;{i}&quot;);
+}
+<span class="boring">}</span></code></pre></pre>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// 遍历修改Vector
+let mut v = vec![1, 2, 3];
+// 遍历可变借用v，因此i是可变借用，类型为&amp;mut i32, 不支持+=
+// 需要deref
+for i in &amp;mut v {
+    *i += 10
+}
+<span class="boring">}</span></code></pre></pre>
+<h4 id="816-存储不同类型的元素"><a class="header" href="#816-存储不同类型的元素">8.1.6 存储不同类型的元素</a></h4>
+<pre><pre class="playground"><code class="language-rust">// 数组的元素必须类型相同。
+// 解决方案：通过枚举类型和特征类型实现不同元素的存储。
+// 枚举类型的实现：
+#[derive(Debug)]
+enum IpAddr {
+    V4(String),
+    V6(String)
+}
+fn main() {
+    let v = vec![
+        IpAddr::V4(&quot;127.0.0.1&quot;.to_string()),
+        IpAddr::V6(&quot;::1&quot;.to_string())
+    ];
+
+    for ip in v {
+        show_addr(ip)
+    }
+}
+
+fn show_addr(ip: IpAddr) {
+    println!(&quot;{:?}&quot;,ip);
+}</code></pre></pre>
+<pre><pre class="playground"><code class="language-rust">trait IpAddr {
+    fn display(&amp;self);
+}
+
+struct V4(String);
+impl IpAddr for V4 {
+    fn display(&amp;self) {
+        println!(&quot;ipv4: {:?}&quot;,self.0)
+    }
+}
+struct V6(String);
+impl IpAddr for V6 {
+    fn display(&amp;self) {
+        println!(&quot;ipv6: {:?}&quot;,self.0)
+    }
+}
+
+fn main() {
+    // 将实现了特征 IpAddr 的实例，用Box::new()包装
+    // 这里必须手动指定类型：Vec&lt;Box&lt;dyn IpAddr&gt;&gt;，表示数组 v 存储的是特征 IpAddr 的对象
+    let v: Vec&lt;Box&lt;dyn IpAddr&gt;&gt; = vec![
+        Box::new(V4(&quot;127.0.0.1&quot;.to_string())),
+        Box::new(V6(&quot;::1&quot;.to_string())),
+    ];
+
+    for ip in v {
+        ip.display();
+    }
+}</code></pre></pre>
+<h4 id="817-vector的排序"><a class="header" href="#817-vector的排序">8.1.7 Vector的排序</a></h4>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// 稳定的排序 sort 和 sort_by，以及非稳定排序 sort_unstable 和 sort_unstable_by。
+// 在 [ 稳定 ] 排序算法里，对相等的元素，不会对其进行重新排序。而在 [ 不稳定 ] 的算法里则不保证这点。
+// 总体而言，[ 非稳定 ] 排序的算法的速度会优于 [ 稳定 ] 排序算法，同时，[ 稳定 ] 排序还会额外分配原数组一半的空间。
+<span class="boring">}</span></code></pre></pre>
+<h5 id="整数数组的排序"><a class="header" href="#整数数组的排序">整数数组的排序</a></h5>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    let mut vec = vec![1, 5, 10, 2, 15];    
+    vec.sort_unstable();    
+    assert_eq!(vec, vec![1, 2, 5, 10, 15]);
+}</code></pre></pre>
+<h5 id="浮点数组的排序"><a class="header" href="#浮点数组的排序">浮点数组的排序</a></h5>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    let mut vec = vec![1.0, 5.6, 10.3, 2.0, 15f32];    
+    // vec.sort_unstable();
+    vec.sort_unstable_by(|a, b| a.partial_cmp(b).unwrap());    
+    assert_eq!(vec, vec![1.0, 2.0, 5.6, 10.3, 15f32]);
+}</code></pre></pre>
+<h6 id="partial_cmp"><a class="header" href="#partial_cmp">partial_cmp</a></h6>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// 如果存在，则返回self和other之间的顺序
+use std::cmp::Ordering;
+
+let result = 1.0.partial_cmp(&amp;2.0);
+assert_eq!(result, Some(Ordering::Less));
+
+let result = 1.0.partial_cmp(&amp;1.0);
+assert_eq!(result, Some(Ordering::Equal));
+
+let result = 2.0.partial_cmp(&amp;1.0);
+assert_eq!(result, Some(Ordering::Greater));
+
+// 如果不存在，则返回None
+let result = f64::NAN.partial_cmp(&amp;1.0);
+assert_eq!(result, None);
+<span class="boring">}</span></code></pre></pre>
+<h5 id="对结构体数组进行排序"><a class="header" href="#对结构体数组进行排序">对结构体数组进行排序</a></h5>
+<pre><pre class="playground"><code class="language-rust">#[derive(Debug)]
+struct Person {
+    name: String,
+    age: u32,
+}
+
+impl Person {
+    fn new(name: String, age: u32) -&gt; Person {
+        Person { name, age }
+    }
+}
+
+fn main() {
+    let mut people = vec![
+        Person::new(&quot;Zoe&quot;.to_string(), 25),
+        Person::new(&quot;Al&quot;.to_string(), 60),
+        Person::new(&quot;John&quot;.to_string(), 1),
+    ];
+    // 定义一个按照年龄倒序排序的对比函数
+    people.sort_unstable_by(|a, b| b.age.cmp(&amp;a.age));
+
+    println!(&quot;{:?}&quot;, people);
+}</code></pre></pre>
+<pre><pre class="playground"><code class="language-rust">// 实现 Ord 需要我们实现 Ord、Eq、PartialEq、PartialOrd 这些属性。好消息是，你可以 derive 这些属性：
+#[derive(Debug, Ord, Eq, PartialEq, PartialOrd)]
+struct Person {
+    name: String,
+    age: u32,
+}
+
+impl Person {
+    fn new(name: String, age: u32) -&gt; Person {
+        Person { name, age }
+    }
+}
+
+fn main() {
+    let mut people = vec![
+        Person::new(&quot;Zoe&quot;.to_string(), 25),
+        Person::new(&quot;Al&quot;.to_string(), 60),
+        Person::new(&quot;Al&quot;.to_string(), 30),
+        Person::new(&quot;John&quot;.to_string(), 1),
+        Person::new(&quot;John&quot;.to_string(), 25),
+    ];
+
+    people.sort_unstable();
+
+    println!(&quot;{:?}&quot;, people);
+}
+// 需要 derive Ord 相关特性，需要确保你的结构体中所有的属性均实现了 Ord 相关特性，否则会发生编译错误。
+// derive 的默认实现会依据属性的顺序依次进行比较，如上述例子中，当 Person 的 name 值相同，则会使用 age 进行比较。</code></pre></pre>
+<h3 id="82-kv存储hashmap"><a class="header" href="#82-kv存储hashmap">8.2 KV存储Hashmap</a></h3>
+<h4 id="821-创建hashmap"><a class="header" href="#821-创建hashmap">8.2.1 创建Hashmap</a></h4>
+<h5 id="使用new方法"><a class="header" href="#使用new方法">使用new方法</a></h5>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::collections::HashMap;
+
+// 创建一个HashMap，用于存储宝石种类和对应的数量
+let mut my_gems = HashMap::new();
+
+// 该Hashmap的类型HashMap&lt;&amp;str,i32&gt;
+// 将宝石类型和对应的数量写入表中
+my_gems.insert(&quot;红宝石&quot;, 1);
+my_gems.insert(&quot;蓝宝石&quot;, 2);
+my_gems.insert(&quot;河边捡的误以为是宝石的破石头&quot;, 18);
+<span class="boring">}</span></code></pre></pre>
+<h5 id="使用迭代器和collect方法创建"><a class="header" href="#使用迭代器和collect方法创建">使用迭代器和collect方法创建</a></h5>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    use std::collections::HashMap;
+
+    let teams_list = vec![
+        (&quot;中国队&quot;.to_string(), 100),
+        (&quot;美国队&quot;.to_string(), 10),
+        (&quot;日本队&quot;.to_string(), 50),
+    ];
+
+    let mut teams_map = HashMap::new();
+    for team in &amp;teams_list {
+        // teams_list&lt;vec&gt;的第一项是String, HashMap要求是&amp;str, 因此要用&amp;team.0
+        teams_map.insert(&amp;team.0, team.1);
+    }
+
+    println!(&quot;{:?}&quot;,teams_map)
+}
+
+</code></pre></pre>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    use std::collections::HashMap;
+
+    let teams_list = vec![
+        (&quot;中国队&quot;.to_string(), 100),
+        (&quot;美国队&quot;.to_string(), 10),
+        (&quot;日本队&quot;.to_string(), 50),
+    ];
+
+    // into_iter()
+    // collect() 将迭代器转换为集合
+    let teams_map: HashMap&lt;_,_&gt; = teams_list.into_iter().collect();
+    
+    println!(&quot;{:?}&quot;,teams_map)
+}</code></pre></pre>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let a = [1, 2, 3];
+
+let doubled: Vec&lt;i32&gt; = a.iter()
+                         .map(|&amp;x| x * 2)
+                         .collect();
+
+assert_eq!(vec![2, 4, 6], doubled);
+<span class="boring">}</span></code></pre></pre>
+<h4 id="822-所有权转移"><a class="header" href="#822-所有权转移">8.2.2 所有权转移</a></h4>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    use std::collections::HashMap;
+
+    let name = String::from(&quot;Sunface&quot;);
+    let age = 18;
+
+    let mut handsome_boys = HashMap::new();
+    // String 没有实现copy特性,转移所有权
+    // 需要复制name, 或者引用，如果引用，就要注意name的lifetime
+    handsome_boys.insert(name, age);
+
+    println!(&quot;因为过于无耻，{}已经被从帅气男孩名单中除名&quot;, name);   // name borrowed
+    println!(&quot;还有，他的真实年龄远远不止{}岁&quot;, age);
+}</code></pre></pre>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    use std::collections::HashMap;
+
+    let name = String::from(&quot;Sunface&quot;);
+    let age = 18;
+
+    let mut handsome_boys = HashMap::new();
+    // &amp;name 实现了copy特性
+    handsome_boys.insert(&amp;name, age);
+
+    std::mem::drop(name);   // 引用的话，要保证所有权比hashmap活的久
+    println!(&quot;因为过于无耻，{:?}已经被除名&quot;, handsome_boys);
+    println!(&quot;还有，他的真实年龄远远不止{}岁&quot;, age);
+}</code></pre></pre>
+<h4 id="823-查询hashmap"><a class="header" href="#823-查询hashmap">8.2.3 查询hashmap</a></h4>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::collections::HashMap;
+
+let mut scores = HashMap::new();
+
+scores.insert(String::from(&quot;Blue&quot;), 10);
+scores.insert(String::from(&quot;Yellow&quot;), 50);
+
+let team_name = String::from(&quot;Blue&quot;);
+// get方法获取值
+let score: Option&lt;&amp;i32&gt; = scores.get(&amp;team_name);
+<span class="boring">}</span></code></pre></pre>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::collections::HashMap;
+
+let mut scores = HashMap::new();
+
+scores.insert(String::from(&quot;Blue&quot;), 10);
+scores.insert(String::from(&quot;Yellow&quot;), 50);
+
+// 遍历
+for (key, value) in &amp;scores {
+    println!(&quot;{}: {}&quot;, key, value);
+}
+<span class="boring">}</span></code></pre></pre>
+<h4 id="824-更新hashmap"><a class="header" href="#824-更新hashmap">8.2.4 更新hashmap</a></h4>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    use std::collections::HashMap;
+
+    let mut scores = HashMap::new();
+
+    scores.insert(&quot;Blue&quot;, 10);
+
+    // insert() 无键返回None, 存在键值, 更新值，返回旧值。键值不更新。
+    // 覆盖已有的值
+    let old = scores.insert(&quot;Blue&quot;, 20);
+    assert_eq!(old, Some(10));
+
+    // 查询新插入的值
+    let new = scores.get(&quot;Blue&quot;);
+    assert_eq!(new, Some(&amp;20));
+
+    // 查询Yellow对应的值，若不存在则插入新值
+    let v = scores.entry(&quot;Yellow&quot;).or_insert(5);
+    assert_eq!(*v, 5); // 不存在，插入5
+
+    // 查询Yellow对应的值，若不存在则插入新值
+    let v = scores.entry(&quot;Yellow&quot;).or_insert(50);
+    assert_eq!(*v, 5); // 已经存在，因此50没有插入
+}</code></pre></pre>
+<pre><pre class="playground"><code class="language-rust">#![allow(unused)]
+fn main() {
+use std::collections::HashMap;
+
+let text = &quot;hello world wonderful world&quot;;
+
+let mut map = HashMap::new();
+// 根据空格来切分字符串(英文单词都是通过空格切分)
+for word in text.split_whitespace() {
+    let count = map.entry(word).or_insert(0); // or_insert() 值不存在则插入
+    *count += 1;
+}
+
+println!(&quot;{:?}&quot;, map);
+}</code></pre></pre>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::collections::HashMap;
+
+let mut map: HashMap&lt;&amp;str, u32&gt; = HashMap::new();
+
+// and_modify() 在任何潜在的插入 map 之前，提供对占用条目的就地可变访问。
+map.entry(&quot;poneyland&quot;)
+   .and_modify(|e| { *e += 1 })
+   .or_insert(42);
+assert_eq!(map[&quot;poneyland&quot;], 42);
+
+map.entry(&quot;poneyland&quot;)
+   .and_modify(|e| { *e += 1 })
+   .or_insert(42);
+assert_eq!(map[&quot;poneyland&quot;], 43);
+<span class="boring">}</span></code></pre></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../ch07/generics_and_traits.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../ch09/lifetimes.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../ch07/generics_and_traits.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../ch09/lifetimes.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,510 @@
+<!DOCTYPE HTML>
+<html lang="cjk" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title> 复合类型  - Typewrite of Rust</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html"> 介绍 </a></li><li class="spacer"></li><li class="chapter-item expanded affix "><li class="part-title">速查</li><li class="spacer"></li><li class="chapter-item expanded "><a href="../ch01/var_binding.html"><strong aria-hidden="true">1.</strong>  变量绑定和解构 </a></li><li class="chapter-item expanded "><a href="../ch02/basic_type.html"><strong aria-hidden="true">2.</strong>  基本类型 </a></li><li class="chapter-item expanded "><a href="../ch03/complex_type.html" class="active"><strong aria-hidden="true">3.</strong>  复合类型 </a></li><li class="chapter-item expanded "><a href="../ch04/flow_control.html"><strong aria-hidden="true">4.</strong>  流程控制 </a></li><li class="chapter-item expanded "><a href="../ch05/pattern_matching.html"><strong aria-hidden="true">5.</strong>  模式匹配 </a></li><li class="chapter-item expanded "><a href="../ch06/method.html"><strong aria-hidden="true">6.</strong>  方法 </a></li><li class="chapter-item expanded "><a href="../ch07/generics_and_traits.html"><strong aria-hidden="true">7.</strong>  泛型和特征 </a></li><li class="chapter-item expanded "><a href="../ch08/collections.html"><strong aria-hidden="true">8.</strong>  集合类型 </a></li><li class="chapter-item expanded "><a href="../ch09/lifetimes.html"><strong aria-hidden="true">9.</strong>  认识生命周期 </a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Typewrite of Rust</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="3-复合类型"><a class="header" href="#3-复合类型">3. 复合类型</a></h2>
+<h3 id="31-字符串"><a class="header" href="#31-字符串">3.1 字符串</a></h3>
+<h4 id="311-字符串和切片字符串字面量"><a class="header" href="#311-字符串和切片字符串字面量">3.1.1 字符串和切片(字符串字面量)</a></h4>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// 中文在 UTF-8 中占用三个字节
+// 切片的本质是指针
+let s = String::from(&quot;hello world&quot;);
+let sentence = String::from(&quot;你好,世界&quot;);
+let a = [1,2,3,4,5];
+
+let hello = &amp;s[0..5];
+let world = &amp;s[6..11];
+
+assert_eq!(&amp;s[0..5], &amp;s[..5]);
+assert_eq!(&amp;s, &amp;s[..]);
+assert!(&amp;s[0..6]);  // 需要是3的倍数，否则报错
+assert_eq!(&amp;a[1..3], [2, 3]);
+<span class="boring">}</span></code></pre></pre>
+<h4 id="312-操作字符串"><a class="header" href="#312-操作字符串">3.1.2 操作字符串</a></h4>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>s.push_str(&quot;追加字符串&quot;);
+s.insert(5,'插入字符');
+s.replace(&quot;rust&quot;, &quot;RUST&quot;);
+s.replacen(&quot;rust&quot;, &quot;RUST&quot;, 1);  // index
+s.replace_range(0..5, &quot;RUST&quot;);
+
+// 删除字符串
+s.pop();    // 从后往前pop
+s.remove(0);    // index
+
+s.truncate(5);  // 从指定位置到结尾，截断
+s.clear();      // 清空
+let s = &quot;hello&quot;.to_string()+&quot; &quot;+&quot;world&quot;;    
+// String = String1 + &amp;str + &amp;str... String1所有权转移！
+<span class="boring">}</span></code></pre></pre>
+<h4 id="313-操作utf-8字符串"><a class="header" href="#313-操作utf-8字符串">3.1.3 操作UTF-8字符串</a></h4>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>for c in &quot;中国人&quot;.chars(){}
+<span class="boring">}</span></code></pre></pre>
+<h3 id="32-元祖"><a class="header" href="#32-元祖">3.2 元祖</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let tup:(i32, f64, u8) = (500, 6.4, 1);
+<span class="boring">}</span></code></pre></pre>
+<h4 id="321-模式匹配解构元祖"><a class="header" href="#321-模式匹配解构元祖">3.2.1 模式匹配解构元祖</a></h4>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let (x, y, z) = tup;
+<span class="boring">}</span></code></pre></pre>
+<h4 id="322-用--来访问元组"><a class="header" href="#322-用--来访问元组">3.2.2 用 . 来访问元组</a></h4>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let five_hundred = tup.0;
+let six_point_four = tup.1;
+let one = tup.2;
+<span class="boring">}</span></code></pre></pre>
+<h3 id="33-结构体"><a class="header" href="#33-结构体">3.3 结构体</a></h3>
+<h4 id="331-结构体语法"><a class="header" href="#331-结构体语法">3.3.1 结构体语法</a></h4>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// 定义结构体
+// 结构体数据存在堆上, 实际是指针
+struct User {
+  active: bool,
+  username: String,
+  email: String,
+  sign_in_count: u64,
+}
+
+// 实例化
+let mut user1 = User {
+    email: String::from(&quot;someone@example.com&quot;),
+    username: String::from(&quot;someusername123&quot;),
+    active: true,
+    sign_in_count: 1,
+};
+
+// 访问结构体的成员
+user1.email = String::from(&quot;anotheremail@example.com&quot;);
+
+// 结构体更新语法
+let user2 = User {
+      email: String::from(&quot;another@example.com&quot;),
+      ..user1
+};
+<span class="boring">}</span></code></pre></pre>
+<h4 id="332-元祖结构体"><a class="header" href="#332-元祖结构体">3.3.2 元祖结构体</a></h4>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct Color(i32, i32, i32);
+let black = Color(0, 0, 0);
+<span class="boring">}</span></code></pre></pre>
+<h4 id="333-单元结构体"><a class="header" href="#333-单元结构体">3.3.3 单元结构体</a></h4>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct AlwaysEqual;
+
+let subject = AlwaysEqual;
+
+// 我们不关心 AlwaysEqual 的字段数据，只关心它的行为，因此将它声明为单元结构体，然后再为它实现某个特征
+impl SomeTrait for AlwaysEqual {}
+<span class="boring">}</span></code></pre></pre>
+<h4 id="334-结构体数据的所有权"><a class="header" href="#334-结构体数据的所有权">3.3.4 结构体数据的所有权</a></h4>
+<pre><pre class="playground"><code class="language-rust">// 因为我们想要这个结构体拥有它所有的数据，而不是从其它地方借用数据。
+// 你也可以让 User 结构体从其它对象借用数据，不过这么做，就需要引入生命周期(lifetimes)这个新概念
+struct User&lt;'a&gt; {
+    username: &amp;'a str,
+    email: &amp;'a str,
+    sign_in_count: u64,
+    active: bool,
+}
+
+fn main() {
+    let user1 = User {
+        email: &quot;someone@example.com&quot;,
+        username: &quot;someusername123&quot;,
+        active: true,
+        sign_in_count: 1,
+    };
+}</code></pre></pre>
+<h4 id="335-使用derivedebug-来打印结构体的信息"><a class="header" href="#335-使用derivedebug-来打印结构体的信息">3.3.5 使用<code>#[derive(Debug)]</code> 来打印结构体的信息</a></h4>
+<pre><pre class="playground"><code class="language-rust">#[derive(Debug)]
+struct Rectangle {
+    width: u32,
+    height: u32,
+}
+
+fn main() {
+    let scale = 2;
+    let rect1 = Rectangle {
+        width: dbg!(30 * scale),
+        height: 50,
+    };
+
+    println!(&quot;rect1 is {:?}&quot;, rect1);
+    // 还有一个简单的输出 debug 信息的方法，那就是使用 dbg! 宏，
+    // 它会拿走表达式的所有权，然后打印出相应的文件名、行号等 debug 信息，
+    // 当然还有我们需要的表达式的求值结果。除此之外，它最终还会把表达式值的所有权返回!
+    dbg!(&amp;rect1);
+}</code></pre></pre>
+<pre><code class="language-text">$ cargo run
+rect1 is Rectangle { width: 30, height: 50 }
+
+$ cargo run
+[src/main.rs:10] 30 * scale = 60
+[src/main.rs:14] &amp;rect1 = Rectangle {
+    width: 60,
+    height: 50,
+}
+</code></pre>
+<blockquote>
+<p>dbg! 输出到标准错误输出 stderr，而 println! 输出到标准输出 stdout。</p>
+</blockquote>
+<h3 id="34-枚举"><a class="header" href="#34-枚举">3.4 枚举</a></h3>
+<h4 id="341-枚举语法"><a class="header" href="#341-枚举语法">3.4.1 枚举语法</a></h4>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>enum PokerSuit {
+  Clubs,
+  Spades,
+  Diamonds,
+  Hearts,
+}
+
+let heart = PokerSuit::Hearts;
+let diamond = PokerSuit::Diamonds;
+<span class="boring">}</span></code></pre></pre>
+<pre><pre class="playground"><code class="language-rust">// 用struct的带值的枚举
+enum PokerSuit {
+    Clubs,
+    Spades,
+    Diamonds,
+    Hearts,
+}
+
+struct PokerCard {
+    suit: PokerSuit,
+    value: u8
+}
+
+fn main() {
+   let c1 = PokerCard {
+       suit: PokerSuit::Clubs,
+       value: 1,
+   };
+   let c2 = PokerCard {
+       suit: PokerSuit::Diamonds,
+       value: 12,
+   };
+}</code></pre></pre>
+<pre><pre class="playground"><code class="language-rust">// 带值的枚举，优于上面代码
+enum PokerCard {
+    Clubs(u8),
+    Spades(u8),
+    Diamonds(u8),
+    Hearts(u8),
+}
+
+fn main() {
+   let c1 = PokerCard::Spades(5);
+   let c2 = PokerCard::Diamonds(13);
+}</code></pre></pre>
+<h4 id="342-option枚举用于处理空值"><a class="header" href="#342-option枚举用于处理空值">3.4.2 Option枚举用于处理空值</a></h4>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>enum Option&lt;T&gt; {
+    Some(T),
+    None,
+}
+<span class="boring">}</span></code></pre></pre>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// 因为 Option，Some，None 都包含在 prelude 中，因此你可以直接通过名称来使用它们，
+// 而无需以 Option::Some 这种形式去使用，总之，千万不要因为调用路径变短了，
+// 就忘记 Some 和 None也是 Option 底下的枚举成员！
+fn plus_one(x: Option&lt;i32&gt;) -&gt; Option&lt;i32&gt; {
+    match x {
+        None =&gt; None,
+        Some(i) =&gt; Some(i + 1),
+    }
+}
+
+let five = Some(5);
+let six = plus_one(five);
+let none = plus_one(None);
+<span class="boring">}</span></code></pre></pre>
+<h3 id="35-数组"><a class="header" href="#35-数组">3.5 数组</a></h3>
+<ul>
+<li><strong>速度很快但是长度固定</strong>的 array，称为<strong>数组</strong>。</li>
+<li><strong>可动态增长的但是有性能损耗</strong>的 Vector，称为<strong>动态数组</strong>。</li>
+</ul>
+<h4 id="351-创建数组"><a class="header" href="#351-创建数组">3.5.1 创建数组</a></h4>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let a = [1, 2, 3, 4, 5];
+let a:[i32; 5] = [1, 2, 3, 4, 5];
+let a = [3; 5];
+<span class="boring">}</span></code></pre></pre>
+<h4 id="352-访问数组"><a class="header" href="#352-访问数组">3.5.2 访问数组</a></h4>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let a = [1, 2, 3, 4, 5];
+let first = a[0];
+let second = a[1];
+<span class="boring">}</span></code></pre></pre>
+<h4 id="353-数组元素为非基础类型"><a class="header" href="#353-数组元素为非基础类型">3.5.3 数组元素为非基础类型</a></h4>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// String 未实现 Copy, 不能实现[String; 8]的赋值方式
+// 须使用 std::array::from_fn
+let array: [String; 8] = std::array::from_fn(|_i| String::from(&quot;rust is good!&quot;));
+println!(&quot;{:#?}&quot;, array);
+<span class="boring">}</span></code></pre></pre>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+  // 编译器自动推导出one的类型
+  let one             = [1, 2, 3];
+  // 显式类型标注
+  let two: [u8; 3]    = [1, 2, 3];
+  let blank1          = [0; 3];
+  let blank2: [u8; 3] = [0; 3];
+
+  // arrays是一个二维数组，其中每一个元素都是一个数组，元素类型是[u8; 3]
+  let arrays: [[u8; 3]; 4]  = [one, two, blank1, blank2];
+
+  // 借用arrays的元素用作循环中
+  for a in &amp;arrays {
+    print!(&quot;{:?}: &quot;, a);
+    // 将a变成一个迭代器，用于循环
+    // 你也可以直接用for n in a {}来进行循环
+    for n in a.iter() {
+      print!(&quot;\t{} + 10 = {}&quot;, n, n+10);
+    }
+
+    let mut sum = 0;
+    // 0..a.len,是一个 Rust 的语法糖，其实就等于一个数组，元素是从0,1,2一直增加到到a.len-1
+    // 可以用for_each来进行循环 a.iter().for_each(|n| sum += n);
+    for i in 0..a.len() {
+      sum += a[i];
+    }
+    println!(&quot;\t({:?} = {})&quot;, a, sum);
+  }
+}</code></pre></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../ch02/basic_type.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../ch04/flow_control.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../ch02/basic_type.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../ch04/flow_control.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>
