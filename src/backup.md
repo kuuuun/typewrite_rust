@@ -51,8 +51,39 @@ match option {
 
 因为在Rust中无法使用&运算符来访问该值.
 
+- ref是用来创建引用的，它右边会有一个新创建的变量，这个变量就会是一个引用
+- &一共有两种意思
+  - 一个是在赋值号右面，用来给左边的变量赋值
+  - 一个是在match匹配模式下，用来进行解引用的
+  > 有一个很好记的方式，如果符号右边的变量是一个确定的值，那么就用&，
+  > 如果符号右边的值是一个变量，这是新创建的值，之前没有出现过，那么就用ref
+
+> A ref borrow on the left side of an assignment is equivalent to an & borrow on
+> the right side.
+
 ## `<'_>` 是什么意思?
 
-`< >` 是泛型声明
-`'` 是lifttime
-`_` 是让编译器帮你推断
+**`< >`** 是泛型声明
+
+**`'`** 是lifetime
+
+**`_`** 是让编译器帮你推断
+
+## ref
+
+```rust
+#[allow(array_into_iter)]
+fn main() {
+    let v = [1, 2, 3, 4];
+    let mut v_iter = v.into_iter();
+    loop {
+        let temp = match v_iter.next() {
+            Some(x) => x,
+            None => break,
+        };
+        let ref j = temp;
+        // addr of j is always same
+        println!("{:p}", j);
+    }
+}
+```
