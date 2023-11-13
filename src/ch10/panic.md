@@ -1,11 +1,11 @@
-# 错误处理
+# 10. 错误处理
 
 - 如果是 main 线程，则程序会终止，如果是其它子线程，该线程会终止，但是不会影响 main 线程。\
   因此，尽量不要在 main 线程中做太多任务，将这些任务交由子线程去做，就算子线程 panic 也不会导致整个程序的结束。
 
-## `panic`
+## 10.1 `panic`
 
-### 主动调用
+### 10.1.1 主动调用
 
 ```rust
 fn main(){
@@ -13,7 +13,7 @@ fn main(){
 }
 ```
 
-### 何时使用`panic!`
+### 10.1.2 何时使用`panic!`
 
 有害状态大概分为几类：
 
@@ -27,7 +27,7 @@ use std::net::IpAddr;
 let home: IpAddr = "127.0.0.1".parse().unwrap();
 ```
 
-## 可恢复错误 Result
+## 10.2 可恢复错误 Result
 
 ```rust
 // 报错
@@ -49,7 +49,7 @@ fn main() {
 }
 ```
 
-### 对返回的错误进行处理
+### 10.2.1 对返回的错误进行处理
 
 ```rust
 use std::fs::File;
@@ -71,10 +71,11 @@ fn main() {
 }
 ```
 
-### 失败就panic: unwrap 和 expect
+### 10.2.2 失败就panic: unwrap 和 expect
 
 ```rust
 // expect会自带提示信息，相当于重载了错误打印函数。
+#![allow(unused_variables)]
 use std::fs::File;
 
 fn main() {
@@ -82,7 +83,7 @@ fn main() {
 }
 ```
 
-### 错误传播
+### 10.2.3 错误传播
 
 ```rust
 use std::fs::File;
@@ -226,6 +227,7 @@ fn first(arr: &[i32]) -> Option<&i32> {
 ```rust
 // ?要求Result<T,E>形式的返回值
 // 原则上，？用在function内
+#![allow(unused_variables)]
 use std::error::Error;
 use std::fs::File;
 
