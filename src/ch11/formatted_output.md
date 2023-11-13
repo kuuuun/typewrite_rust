@@ -14,9 +14,9 @@ println!("{:04}", 42);             // => "0042" with leading zeros
 
 ### 11.1.1 `print!`, `println!`, `format!`
 
-- print! 将格式化文本输出到标准输出，不带换行符
-- println! 同上，但是在行的末尾添加换行符
-- format! 将格式化文本输出到 String 字符串
+- `print!` 将格式化文本输出到标准输出，不带换行符
+- `println!` 同上，但是在行的末尾添加换行符
+- `format!` 将格式化文本输出到 String 字符串
 
 ```rust
 fn main() {
