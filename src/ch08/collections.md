@@ -1,10 +1,10 @@
-## 8. 集合类型
+# 8. 集合类型
 
-### 8.1 动态数组Vector
+## 8.1 动态数组Vector
 
-#### 8.1.1 创建动态数组
+### 8.1.1 创建动态数组
 
-##### Vec::new
+#### Vec::new
 
 ```rust
 let v: Vec<i32> = Vec::new();
@@ -13,20 +13,20 @@ let mut v = Vec::new();
 v.push(1);
 ```
 
-##### `vec![]`
+#### `vec![]`
 
 ```rust
 let v = vec![1, 2, 3];
 ```
 
-##### arr 转 vec
+#### arr 转 vec
 
 ```rust
 let arr = [1,3,4];
 let vec = arr.to_vec();
 ```
 
-#### 8.1.2 从Vector中读取元素
+### 8.1.2 从Vector中读取元素
 
 ```rust
 let v = vec![1, 2, 3, 4, 5];
@@ -42,7 +42,7 @@ match v.get(2) {
 }
 ```
 
-#### 8.1.3 下标索引与.get的区别
+### 8.1.3 下标索引与.get的区别
 
 ```rust
 let v = vec![1, 2, 3, 4, 5];
@@ -51,7 +51,7 @@ let does_not_exist = &v[100];   // 报错
 let does_not_exist = v.get(100);    // 有值返回Some, 无值返回None
 ```
 
-#### 8.1.4 同时借用多个数组元素
+### 8.1.4 同时借用多个数组元素
 
 ```rust
 // 原因在于：数组的大小是可变的，当旧数组的大小不够用时，Rust 会重新分配一块更大的内存空间，然后把旧数组拷贝过来。
@@ -70,7 +70,7 @@ v.push(6);
 println!("The first element is: {first}");
 ```
 
-#### 8.1.5 迭代遍历Vector中的元素
+### 8.1.5 迭代遍历Vector中的元素
 
 ```rust
 let v = vec![1, 2, 3];
@@ -90,7 +90,7 @@ for i in &mut v {
 }
 ```
 
-#### 8.1.6 存储不同类型的元素
+### 8.1.6 存储不同类型的元素
 
 ```rust
 // 数组的元素必须类型相同。
@@ -149,7 +149,7 @@ fn main() {
 }
 ```
 
-#### 8.1.7 Vector的排序
+### 8.1.7 Vector的排序
 
 ```rust
 // 稳定的排序 sort 和 sort_by，以及非稳定排序 sort_unstable 和 sort_unstable_by。
@@ -157,7 +157,7 @@ fn main() {
 // 总体而言，[ 非稳定 ] 排序的算法的速度会优于 [ 稳定 ] 排序算法，同时，[ 稳定 ] 排序还会额外分配原数组一半的空间。
 ```
 
-##### 整数数组的排序
+#### 整数数组的排序
 
 ```rust
 fn main() {
@@ -167,7 +167,7 @@ fn main() {
 }
 ```
 
-##### 浮点数组的排序
+#### 浮点数组的排序
 
 ```rust
 fn main() {
@@ -178,7 +178,7 @@ fn main() {
 }
 ```
 
-###### partial_cmp
+##### partial_cmp
 
 ```rust
 // 如果存在，则返回self和other之间的顺序
@@ -198,7 +198,7 @@ let result = f64::NAN.partial_cmp(&1.0);
 assert_eq!(result, None);
 ```
 
-##### 对结构体数组进行排序
+#### 对结构体数组进行排序
 
 ```rust
 #[derive(Debug)]
@@ -257,11 +257,11 @@ fn main() {
 // derive 的默认实现会依据属性的顺序依次进行比较，如上述例子中，当 Person 的 name 值相同，则会使用 age 进行比较。
 ```
 
-### 8.2 KV存储Hashmap
+## 8.2 KV存储Hashmap
 
-#### 8.2.1 创建Hashmap
+### 8.2.1 创建Hashmap
 
-##### 使用new方法
+#### 使用new方法
 
 ```rust
 use std::collections::HashMap;
@@ -276,7 +276,7 @@ my_gems.insert("蓝宝石", 2);
 my_gems.insert("河边捡的误以为是宝石的破石头", 18);
 ```
 
-##### 使用迭代器和collect方法创建
+#### 使用迭代器和collect方法创建
 
 ```rust
 fn main() {
@@ -328,7 +328,7 @@ let doubled: Vec<i32> = a.iter()
 assert_eq!(vec![2, 4, 6], doubled);
 ```
 
-#### 8.2.2 所有权转移
+### 8.2.2 所有权转移
 
 ```rust
 fn main() {
@@ -364,7 +364,7 @@ fn main() {
 }
 ```
 
-#### 8.2.3 查询hashmap
+### 8.2.3 查询hashmap
 
 ```rust
 use std::collections::HashMap;
@@ -393,7 +393,7 @@ for (key, value) in &scores {
 }
 ```
 
-#### 8.2.4 更新hashmap
+### 8.2.4 更新hashmap
 
 ```rust
 fn main() {

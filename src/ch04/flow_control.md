@@ -1,6 +1,6 @@
-## 4. 流程控制
+# 4. 流程控制
 
-### 4.1 使用if来做分支控制
+## 4.1 使用if来做分支控制
 
 ```rust
 fn main() {
@@ -15,7 +15,7 @@ fn main() {
 }
 ```
 
-### 4.2 使用`else if`来处理多重条件
+## 4.2 使用`else if`来处理多重条件
 
 ```rust
 fn main() {
@@ -33,7 +33,7 @@ fn main() {
 }
 ```
 
-### 4.3 for循环
+## 4.3 for循环
 
 ```rust
 // 如果还想继续使用container，可以使用&和&mut
@@ -64,7 +64,7 @@ for _ in 0..10 {
 }
 ```
 
-### 4.4 continue和break
+## 4.4 continue和break
 
 ```rust
 // 使用 continue 可以跳过当前当次的循环，开始下次的循环：
@@ -86,7 +86,7 @@ for _ in 0..10 {
  }
 ```
 
-### 4.5 while循环
+## 4.5 while循环
 
 ```rust
 // 如果你需要一个条件来循环，当该条件为 true 时，继续循环，条件为 false，跳出循环，那么 while 就非常适用：
@@ -103,7 +103,7 @@ fn main() {
 }
 ```
 
-### 4.6 loop循环
+## 4.6 loop循环
 
 ```rust
 fn main() {

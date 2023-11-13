@@ -1,6 +1,12 @@
 [book]
 authors = ["KuuuuuuN"]
-language = "cjk"
+language = "en"
 multilingual = false
 src = "src"
 title = "Typewrite of Rust"
+
+[preprocessor.pagetoc]
+
+[output.html]
+additional-css = ["theme/pagetoc.css"]
+additional-js = ["theme/pagetoc.js"]

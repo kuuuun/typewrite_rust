@@ -1,6 +1,6 @@
-## 6. 方法Method
+# 6. 方法Method
 
-### 6.1 定义方法
+## 6.1 定义方法
 
 ```rust
 struct Circle {
@@ -45,7 +45,7 @@ fn main(){
 }
 ```
 
-### 6.2 带有多个参数的方法
+## 6.2 带有多个参数的方法
 
 ```rust
 #![allow(unused)]
@@ -81,7 +81,7 @@ fn main() {
 }
 ```
 
-### 6.3 关联函数
+## 6.3 关联函数
 
 ```rust
 impl Rectangle {
@@ -92,7 +92,7 @@ impl Rectangle {
 }
 ```
 
-### 6.4 多个impl定义
+## 6.4 多个impl定义
 
 ```rust
 // 用于演示，实际不用
@@ -109,7 +109,7 @@ impl Rectangle {
 }
 ```
 
-### 6.5 为枚举实现方法
+## 6.5 为枚举实现方法
 
 ```rust
 // NOTE: 枚举强大，在于它好用，可以同一化类型，还可以像结构一样实现方法。
@@ -138,4 +138,3 @@ fn main() {
     n.call();   // output: no message in Message::Write()
 }
 ```
-

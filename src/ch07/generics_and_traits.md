@@ -1,12 +1,12 @@
-## 7. 泛型和特征
+# 7. 泛型和特征
 
-### 7.1 泛型Generics
+## 7.1 泛型Generics
 
 ```rust
 // 泛型会增加编译时间，增加最后编译文件的大小。
 ```
 
-#### 7.1.1 泛型详解
+### 7.1.1 泛型详解
 
 ```rust
 // 函数 largest 有泛型类型 T，它有个参数 list，其类型是元素为 T 的数组切片，最后，该函数返回值的类型也是 T。
@@ -40,7 +40,7 @@ fn main() {
 }
 ```
 
-#### 7.1.2 结构体的泛型
+### 7.1.2 结构体的泛型
 
 ```rust
 struct Point<T,U> {
@@ -52,7 +52,7 @@ fn main() {
 }
 ```
 
-#### 7.1.3 枚举的泛型
+### 7.1.3 枚举的泛型
 
 ```rust
 enum Result<T, E> {
@@ -61,7 +61,7 @@ enum Result<T, E> {
 }
 ```
 
-#### 7.1.4 方法的泛型
+### 7.1.4 方法的泛型
 
 ```rust
 struct Point<T> {
@@ -107,7 +107,7 @@ fn main() {
 }
 ```
 
-##### 为具体的泛型类型实现方法
+#### 为具体的泛型类型实现方法
 
 ```rust
 impl Point<f32> {
@@ -117,7 +117,7 @@ impl Point<f32> {
 }
 ```
 
-#### 7.1.5 const 泛型（Rust 1.51 版本引入的重要特性）
+### 7.1.5 const 泛型（Rust 1.51 版本引入的重要特性）
 
 ```rust
 // 用数组切片的方式，可以实现 const 泛型
@@ -147,7 +147,7 @@ fn main() {
 }
 ```
 
-### 7.2 特征trait
+## 7.2 特征trait
 
 ```rust
 fn add<T: std::ops::Add<Output = T>>(a:T, b:T) -> T {
@@ -155,7 +155,7 @@ fn add<T: std::ops::Add<Output = T>>(a:T, b:T) -> T {
 }
 ```
 
-#### 7.2.1 定义特征
+### 7.2.1 定义特征
 
 ```rust
 pub trait Summary {
@@ -163,7 +163,7 @@ pub trait Summary {
 }
 ```
 
-#### 7.2.2 为类型实现特征
+### 7.2.2 为类型实现特征
 
 ```rust
 pub trait Summary {
@@ -201,7 +201,7 @@ fn main() {
 }
 ```
 
-#### 7.2.3 使用特征作为函数参数
+### 7.2.3 使用特征作为函数参数
 
 ```rust
 pub fn notify(item: &impl Summary) {
@@ -209,7 +209,7 @@ pub fn notify(item: &impl Summary) {
 }
 ```
 
-#### 7.2.4 特征约束(trait bound)
+### 7.2.4 特征约束(trait bound)
 
 ```rust
 // 标准trait bound, 上面的代码impl Summary 是语法糖
@@ -228,7 +228,7 @@ pub fn notify<T: Summary>(item1: &T, item2: &T) {}
 // 如果是多参数实现相同的特征，用这种。
 ```
 
-##### 多重约束
+#### 多重约束
 
 ```rust
 pub fn notify(item: &(impl Summary + Display)) {}
@@ -236,7 +236,7 @@ pub fn notify(item: &(impl Summary + Display)) {}
 pub fn notify<T: Summary + Display>(item: &T) {}
 ```
 
-##### where约束
+#### where约束
 
 ```rust
 fn some_function<T: Display + Clone, U: Clone + Debug>(t: &T, u: &U) -> i32 {}
@@ -249,7 +249,7 @@ fn some_function<T, U>(t: &T, u: &U) -> i32
 {}
 ```
 
-##### 使用特征约束有条件地实现方法或特征
+#### 使用特征约束有条件地实现方法或特征
 
 ```rust
 use std::fmt::Display;
@@ -279,7 +279,7 @@ impl<T: Display + PartialOrd> Pair<T> {
 }
 ```
 
-#### 7.2.5 函数返回中的 impl Trait
+### 7.2.5 函数返回中的 impl Trait
 
 ```rust
 // 但是这种返回值方式有一个很大的限制：只能有一个具体的类型
@@ -293,9 +293,9 @@ fn returns_summarizable() -> impl Summary {
 }
 ```
 
-#### 7.2.6 几个综合例子
+### 7.2.6 几个综合例子
 
-##### 为自定义类型实现 + 操作
+#### 为自定义类型实现 + 操作
 
 ```rust
 use std::ops::Add;
@@ -333,7 +333,7 @@ fn main() {
 }
 ```
 
-##### 自定义类型的打印输出
+#### 自定义类型的打印输出
 
 ```rust
 #![allow(dead_code)]
@@ -387,4 +387,3 @@ fn main() {
   println!("{}", f6);
 }
 ```
-
